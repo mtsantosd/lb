@@ -1,7 +1,8 @@
-- name: Install and Configure Haproxy
+---
+- name: Ensuring HAProxy is deployed
   hosts: all
+  become: true
   tasks:
-    - name: Install HAProxy
-      dnf:
+    - name: Ensure HAProxy is installed and configured
+      ansible.builtin.include_role:
         name: haproxy
-        state: latest
