@@ -1,3 +1,7 @@
 - name: Install and Configure Haproxy
   hosts: all
-
+  tasks:
+    - name: Install HAProxy
+      dnf:
+        name: haproxy
+        state: latest
