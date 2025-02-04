@@ -3,6 +3,24 @@
   hosts: all
   become: true
   tasks:
-    - name: Ensure HAProxy is installed and configured
-      ansible.builtin.include_role:
+    - name: Ensure HAProxy is installed
+      dnf:
         name: haproxy
+        state: latest
+
+    - name: Enabled Haproxy service
+      service:
+        name: haproxy
+        state: started
+        enabled: true
+
+    - name: Configuring Haproxy
+      template:
+        src: templates/haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+      notify: restart haproxy
+
+  handlers:
+    - name: restart haproxy
+        name: haproxy
+        state: restarted
