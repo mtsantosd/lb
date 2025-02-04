@@ -62,26 +62,16 @@ defaults
     maxconn                 3000
 
 #---------------------------------------------------------------------
-frontend kubernetes-api
-  bind *:6443
+frontend http
+  bind *:80
   mode tcp
   option tcplog
-  default_backend kubernetes-masters
+  default_backend backend-http
 
-backend kubernetes-masters
+backend backend-http
   balance roundrobin
   option tcp-check
-  server master01 192.168.0.101:6443 check
-  #server master02 192.168.0.102:6443 check
+{% for host in groups['Web'] %}
+  server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_enp2s0']['ipv4']['address'] }} check port 80
+{% endfor %}
 
-#---------------------------------------------------------------------
-frontend http-https
-  bind *:443
-  mode tcp
-  option tcplog
-  default_backend kubernetes-workers
-
-backend kubernetes-workers
-  balance roundrobin
-  option tcp-check
-  server master01 192.168.0.101:443 check
